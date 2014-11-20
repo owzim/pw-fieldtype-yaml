@@ -1,0 +1,81 @@
+<?php
+
+use \owzim\FieldtypeYaml\FTY;
+
+class FieldtypeYaml extends FieldtypeTextarea {
+
+    const DEFAULT_FONT_FAMILY = 'Consolas, Monaco, "Andale Mono", monospace';
+
+    public static function getModuleInfo() {
+        return array(
+            'title' => 'Fieldtype YAML',
+            'summary' => 'Field that stores YAML data and formats it as an object, when requested.',
+            'version' => '0.1.0',
+            'author' => 'owzim',
+            'icon' => 'code',
+        );
+    }
+
+
+    public function init() {
+        parent::init();
+        require_once(__DIR__ . '/owzim/Autoloader.php');
+        spl_autoload_register(array('owzim\Autoloader', 'autoload'));
+    }
+
+
+    public function ___formatValue(Page $page, Field $field, $value) {
+        $value = parent::___formatValue($page, $field, $value);
+
+        // $wire = $this->useWireArray ? true : false;
+        $value = FTY::parseYAML($value, $field->yamlParseAs);
+        return $value;
+    }
+
+    public function getInputfield(Page $page, Field $field) {
+
+        $inputfield = parent::getInputfield($page, $field);
+        $inputfield->class = $this->className();
+        $fontFamily = trim($field->fontFamily);
+
+        if (!empty($fontFamily)) {
+            $inputfield->attr('style', "font-family: {$fontFamily}");
+        }
+
+        return $inputfield;
+    }
+
+
+    public function ___getConfigInputfields(Field $field) {
+
+        $parentInputfields = parent::___getConfigInputfields($field);
+        $inputfields = new InputfieldWrapper();
+
+        foreach ($parentInputfields as $inputfield) {
+            if ($inputfield->name == 'inputfieldClass') {
+                $inputfields->append($inputfield);
+            }
+        }
+
+        $f = $this->modules->get('InputfieldText');
+        $f->attr('name', 'fontFamily');
+        $f->label = $this->_('Font Family');
+        $f->attr('value', !isset($field->fontFamily) ? self::DEFAULT_FONT_FAMILY : $field->fontFamily);
+        $inputfields->prepend($f);
+
+        $f = $this->modules->get('InputfieldRadios');
+        $f->attr('name', 'yamlParseAs');
+        $f->label = $this->_('Parse as');
+        $f->addOption(FTY::PARSE_AS_WIRE_DATA, $this->_('WireData'));
+        $f->addOption(FTY::PARSE_AS_OBJECT, $this->_('Object'));
+        $f->addOption(FTY::PARSE_AS_ASSOC, $this->_('Associative Array'));
+        $f->attr('value', !isset($field->yamlParseAs) ? FTY::DEFAULT_PARSE_AS : (int) $field->yamlParseAs);
+        $f->attr('optionColumns', 1);
+        $f->description = $this->_(
+            'If WireData is chosen, the parsed object has full support for things like **$someKey->get(\'title|name\')**');
+        $inputfields->prepend($f);
+
+        return $inputfields;
+    }
+}
+
