@@ -20,7 +20,7 @@ class FieldtypeYaml extends FieldtypeTextarea {
     public function init() {
         parent::init();
         require_once(__DIR__ . '/owzim/FieldtypeYaml/Autoloader.php');
-        spl_autoload_register(array('owzim\FieldtypeYaml\Autoloader', 'autoload'));
+        spl_autoload_register('owzim\FieldtypeYaml\Autoloader::autoload');
     }
 
 

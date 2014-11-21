@@ -4,7 +4,8 @@
  * Class definition of Autoloader
  *
  * @author Marco Stoll <marco.stoll@neuwaerts.de>
- * @version 1.0.2
+ * @author Christian Raunitschka <git@raunitschka.de>
+ * @version 1.0.4
  * @copyright Copyright (c) 2013, neuwaerts GmbH
  * @filesource
  * 
@@ -22,7 +23,7 @@ namespace owzim\FieldtypeYaml;
  *
  * <code>
  * require_once('/path/to/FieldtypeYaml/owzim/FieldtypeYaml/Autoloader.php');
- * spl_autoload_register(array('owzim\FieldtypeYaml\Autoloader', 'autoload'));
+ * spl_autoload_register('owzim\FieldtypeYaml\Autoloader::autoload');
  * </code>
  *
  * @see http://www.php-fig.org/psr/0/
