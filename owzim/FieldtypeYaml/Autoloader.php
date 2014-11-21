@@ -11,7 +11,7 @@
  * modified by owzim to use 'owzim\FieldtypeYaml' namespace
  */
 
-namespace owzim;
+namespace owzim\FieldtypeYaml;
 
 /**
  * Class Autoloader
@@ -21,13 +21,15 @@ namespace owzim;
  * Can be registered as followed:
  *
  * <code>
- * require_once('/path/to/FieldtypeYaml/owzim/Autoloader.php');
- * spl_autoload_register(array('owzim\Autoloader', 'autoload'));
+ * require_once('/path/to/FieldtypeYaml/owzim/FieldtypeYaml/Autoloader.php');
+ * spl_autoload_register(array('owzim\FieldtypeYaml\Autoloader', 'autoload'));
  * </code>
  *
  * @see http://www.php-fig.org/psr/0/
  */
 class Autoloader {
+
+    static $basePath = null;
 
     /**
      * @field boolean Flag signaling, whether the autoload callback is already registered
@@ -54,9 +56,12 @@ class Autoloader {
      */
     public static function autoload($className) {
 
-        static $basePath = null;
+        // if (is_null(self::$basePath)) self::$basePath = dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR;
+        if (is_null(self::$basePath)) self::$basePath =
+            dirname(dirname(__FILE__)) .
+            DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 
-        if (is_null($basePath)) $basePath = dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR;
+        $basePath = self::$basePath;
 
         $className = ltrim($className, '\\');
         $fileName  = $basePath;

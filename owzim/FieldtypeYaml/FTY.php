@@ -1,8 +1,7 @@
 <?php
 namespace owzim\FieldtypeYaml;
 
-use \owzim\Vendor\Spyc;
-
+use \owzim\FieldtypeYaml\Vendor\Spyc;
 class FTY {
 
     const PARSE_AS_ASSOC = 0;

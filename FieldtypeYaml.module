@@ -10,7 +10,7 @@ class FieldtypeYaml extends FieldtypeTextarea {
         return array(
             'title' => 'Fieldtype YAML',
             'summary' => 'Field that stores YAML data and formats it as an object, when requested.',
-            'version' => '0.1.0',
+            'version' => '0.1.1',
             'author' => 'owzim',
             'icon' => 'code',
         );
@@ -19,8 +19,8 @@ class FieldtypeYaml extends FieldtypeTextarea {
 
     public function init() {
         parent::init();
-        require_once(__DIR__ . '/owzim/Autoloader.php');
-        spl_autoload_register(array('owzim\Autoloader', 'autoload'));
+        require_once(__DIR__ . '/owzim/FieldtypeYaml/Autoloader.php');
+        spl_autoload_register(array('owzim\FieldtypeYaml\Autoloader', 'autoload'));
     }
 
 

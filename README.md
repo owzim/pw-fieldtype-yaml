@@ -74,5 +74,6 @@ echo $out;
 
 ### Change Log
 
+* **0.1.1** move all classes into the `FieldtypeYaml` namespace
 * **0.1.0** initial version
 
