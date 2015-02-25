@@ -2,80 +2,137 @@
 
 use \owzim\FieldtypeYaml\FTY;
 
-class FieldtypeYaml extends FieldtypeTextarea {
+/**
+ * Class definition of FieldtypeYaml
+ *
+ * A Fieldtype module for ProcessWire CMS/CMF
+ *
+ * See README.md for usage instructions.
+ *
+ * @author Christian (owzim) Raunitschka <git@raunitschka.de>
+ * @copyright Copyright (c) 2015, Christian Raunitschka
+ *
+ * @version 0.4.2
+ *
+ * @filesource
+ *
+ * @see https://github.com/owzim/pw-fieldtype-yaml
+ * @see http://raunitschka.de
+ * @see http://www.processwire.com
+ */
 
-    const DEFAULT_FONT_FAMILY = 'Consolas, Monaco, "Andale Mono", monospace';
+class FieldtypeYaml extends FieldtypeTextarea
+{
 
-    public static function getModuleInfo() {
+    /**
+     * $parseCache
+     *
+     * @var array
+     */
+    protected static $parseCache = array();
+
+    public static function getModuleInfo()
+    {
         return array(
-            'title' => 'Fieldtype YAML',
-            'summary' => 'Field that stores YAML data and formats it as an object, when requested.',
-            'version' => '0.1.1',
-            'author' => 'owzim',
-            'icon' => 'code',
+            'title'    => 'Fieldtype YAML',
+            'summary'  => 'Field that stores YAML data and formats it as an object, when requested.',
+            'version'  => '0.2.0',
+            'author'   => 'owzim',
+            'icon'     => 'code',
+            'requires' => array('PHP>=5.4','ProcessWire>=2.5.5'),
         );
     }
 
-
-    public function init() {
+    /**
+     * init
+     *
+     */
+    public function init()
+    {
         parent::init();
         require_once(__DIR__ . '/owzim/FieldtypeYaml/Autoloader.php');
         spl_autoload_register('owzim\FieldtypeYaml\Autoloader::autoload');
     }
 
-
-    public function ___formatValue(Page $page, Field $field, $value) {
-        $value = parent::___formatValue($page, $field, $value);
-
-        // $wire = $this->useWireArray ? true : false;
-        $value = FTY::parseYAML($value, $field->yamlParseAs);
-        return $value;
+    /**
+     * formatValue
+     *
+     * @param  Page   $page
+     * @param  Field  $field
+     * @param  string $value
+     * @return object
+     */
+    public function ___formatValue(Page $page, Field $field, $value)
+    {
+        return $this->getCachedValue($page, $field, $value);
     }
 
-    public function getInputfield(Page $page, Field $field) {
-
-        $inputfield = parent::getInputfield($page, $field);
-        $inputfield->class = $this->className();
-        $fontFamily = trim($field->fontFamily);
-
-        if (!empty($fontFamily)) {
-            $inputfield->attr('style', "font-family: {$fontFamily}");
+    /**
+     * getCachedValue
+     *
+     * @param  Page   $page
+     * @param  Field  $field
+     * @param  string $value
+     * @return object
+     */
+    public function getCachedValue(Page $page, Field $field, $value)
+    {
+        $cacheKey = "{$page->id}_{$field->id}";
+        if (!isset(self::$parseCache[$cacheKey])) {
+            return self::$parseCache[$cacheKey] = $this->parseValue($page, $field, $value);
+        } else {
+            return self::$parseCache[$cacheKey];
         }
-
-        return $inputfield;
     }
 
+    /**
+     * parseValue
+     *
+     * @param  Page   $page
+     * @param  Field  $field
+     * @param  string $value
+     * @return object
+     */
+    public function ___parseValue(Page $page, Field $field, $value)
+    {
+        return FTY::parseYAML($value, $field->yamlParseAs, $field->get('label|name'));
+    }
 
-    public function ___getConfigInputfields(Field $field) {
+    /**
+     * getConfigInputfields
+     *
+     * @param  Field  $field
+     * @return InputfieldWrapper
+     */
+    public function ___getConfigInputfields(Field $field)
+    {
+        $forbidden = array('contentType', 'textformatters');
 
         $parentInputfields = parent::___getConfigInputfields($field);
         $inputfields = new InputfieldWrapper();
 
         foreach ($parentInputfields as $inputfield) {
-            if ($inputfield->name == 'inputfieldClass') {
+            if (!in_array($inputfield->name, $forbidden)) {
                 $inputfields->append($inputfield);
             }
         }
 
-        $f = $this->modules->get('InputfieldText');
-        $f->attr('name', 'fontFamily');
-        $f->label = $this->_('Font Family');
-        $f->attr('value', !isset($field->fontFamily) ? self::DEFAULT_FONT_FAMILY : $field->fontFamily);
-        $inputfields->prepend($f);
-
-        $f = $this->modules->get('InputfieldRadios');
-        $f->attr('name', 'yamlParseAs');
-        $f->label = $this->_('Parse as');
-        $f->addOption(FTY::PARSE_AS_WIRE_DATA, $this->_('WireData'));
-        $f->addOption(FTY::PARSE_AS_OBJECT, $this->_('Object'));
-        $f->addOption(FTY::PARSE_AS_ASSOC, $this->_('Associative Array'));
-        $f->attr('value', !isset($field->yamlParseAs) ? FTY::DEFAULT_PARSE_AS : (int) $field->yamlParseAs);
-        $f->attr('optionColumns', 1);
-        $f->description = $this->_(
-            'If WireData is chosen, the parsed object has full support for things like **$someKey->get(\'title|name\')**');
-        $inputfields->prepend($f);
+        $inputfields->add(array(
+            'type' => 'InputfieldRadios',
+            'name' => 'yamlParseAs',
+            'label' => $this->_('Parse as'),
+            'options' => array(
+                FTY::PARSE_AS_WIRE_DATA => $this->_('WireArray/WireData'),
+                FTY::PARSE_AS_OBJECT => $this->_('Object'),
+                FTY::PARSE_AS_ASSOC => $this->_('Associative Array'),
+            ),
+            'value' => !isset($field->yamlParseAs) ? FTY::DEFAULT_PARSE_AS : (int) $field->yamlParseAs,
+            'optionColumns' => 1,
+            'description' => $this->_(
+                "If WireArray/WireData is chosen, the parsed array/object has full support for things like **\$person->get('title|name')** or **\$people->find('age>20')**"
+            ),
+        ));
 
         return $inputfields;
     }
 }
-

@@ -2,7 +2,7 @@
 
 ---
 
-#### for ProcessWire 2.5
+#### for ProcessWire 2.5.5
 
 Field that stores YAML data and formats it as an object, when requested.
 
@@ -14,13 +14,9 @@ In the `Details`-Tab you have some options you can choose from:
 
 **Parse as**
 
-Default is `WireArray`, the data can also be parsed as `Object` or `Associative Array`.
+Default is `WireArray/WireData`, the data can also be parsed as `Object` or `Associative Array`.
 
-*Associative Array* is the fastest and the default output by the used *Spyc* parser, *WireArray* might be the slowest, but it's also the most feature rich. You can access properties like you are used to with *pages* or *fields*, like `$someObject->get('headline|title')`.
-
-**Font Family**
-
-The font stack used for the `Textarea`, default is `Consolas, Monaco, Andale Mono, monospace`. Since we write YAML in here, a monospace font makes sense.
+*Associative Array* is the fastest and the default output by the used *Spyc* parser, *WireArray/WireData* might be the slowest, but it's also the most feature rich. You can access properties like you are used to with *pages* or *fields*, like `$page->person->get('title|name')` or `$page->people->find('age>20')`.
 
 ## Usage
 
@@ -70,10 +66,7 @@ echo $out;
 * I've used a namespaced version of the Autoloader class from [Template Data Providers](https://github.com/marcostoll/processwire-template-data-providers)
 * The YAML parser is a namespaced version of [Spyc](https://github.com/mustangostang/spyc)
 
-
-
 ### Change Log
 
-* **0.1.1** move all classes into the `FieldtypeYaml` namespace
+* **0.2.0** add WireArray feature and parse chaching
 * **0.1.0** initial version
-

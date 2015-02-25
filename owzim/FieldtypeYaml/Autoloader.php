@@ -4,11 +4,10 @@
  * Class definition of Autoloader
  *
  * @author Marco Stoll <marco.stoll@neuwaerts.de>
- * @author Christian Raunitschka <git@raunitschka.de>
  * @version 1.0.4
  * @copyright Copyright (c) 2013, neuwaerts GmbH
  * @filesource
- * 
+ *
  * modified by owzim to use 'owzim\FieldtypeYaml' namespace
  */
 
@@ -28,9 +27,10 @@ namespace owzim\FieldtypeYaml;
  *
  * @see http://www.php-fig.org/psr/0/
  */
-class Autoloader {
+class Autoloader
+{
 
-    static $basePath = null;
+    public static $basePath = null;
 
     /**
      * @field boolean Flag signaling, whether the autoload callback is already registered
@@ -42,8 +42,8 @@ class Autoloader {
      *
      * Does nothing, if already registered.
      */
-    public static function register() {
-
+    public static function register()
+    {
         if (self::$isRegistered) return;
 
         spl_autoload_register(array(__CLASS__, 'autoload'));
@@ -55,9 +55,8 @@ class Autoloader {
      *
      * @param $className
      */
-    public static function autoload($className) {
-
-        // if (is_null(self::$basePath)) self::$basePath = dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR;
+    public static function autoload($className)
+    {
         if (is_null(self::$basePath)) self::$basePath =
             dirname(dirname(__FILE__)) .
             DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
@@ -77,5 +76,4 @@ class Autoloader {
 
         require_once($fileName);
     }
-
 }

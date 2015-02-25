@@ -1,10 +1,13 @@
 <?php
 namespace owzim\FieldtypeYaml;
 
-class FTYData extends \WireData {
+class FTYData extends \WireData
+{
 
-    public function __toString() {
-        return '';
+    public $toStringString = '';
+
+    public function __toString()
+    {
+        return $this->toStringString;
     }
-    
 }
