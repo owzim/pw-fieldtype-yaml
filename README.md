@@ -2,7 +2,7 @@
 
 ---
 
-#### for ProcessWire 2.5.5
+#### for ProcessWire 2.5+ and 3.0+
 
 Field that stores YAML data and formats it as an object, when requested.
 
