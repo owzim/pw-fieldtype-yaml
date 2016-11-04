@@ -68,5 +68,6 @@ echo $out;
 
 ### Change Log
 
+* **0.3.0** Make the module compatible with ProcessWire 3.x
 * **0.2.0** add WireArray feature, parse chaching and make default `toString` output the name or label of the field, if WireData/-Array is selected
 * **0.1.0** initial version

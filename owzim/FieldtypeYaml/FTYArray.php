@@ -2,7 +2,7 @@
 
 namespace owzim\FieldtypeYaml;
 
-class FTYArray extends \WireArray
+class FTYArray extends FTYWireArray
 {
 
     public $toStringString = '';

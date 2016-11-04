@@ -12,7 +12,7 @@ use \owzim\FieldtypeYaml\FTY;
  * @author Christian (owzim) Raunitschka <git@raunitschka.de>
  * @copyright Copyright (c) 2015, Christian Raunitschka
  *
- * @version 0.4.2
+ * @version 0.3.0
  *
  * @filesource
  *
@@ -36,7 +36,7 @@ class FieldtypeYaml extends FieldtypeTextarea
         return array(
             'title'    => 'Fieldtype YAML',
             'summary'  => 'Field that stores YAML data and formats it as an object, when requested.',
-            'version'  => '0.2.0',
+            'version'  => '0.3.0',
             'author'   => 'owzim',
             'icon'     => 'code',
             'requires' => array('PHP>=5.4','ProcessWire>=2.5.5'),

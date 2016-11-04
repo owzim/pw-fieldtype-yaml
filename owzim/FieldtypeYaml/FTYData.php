@@ -1,7 +1,8 @@
 <?php
+
 namespace owzim\FieldtypeYaml;
 
-class FTYData extends \WireData
+class FTYData extends FTYWireData
 {
 
     public $toStringString = '';
