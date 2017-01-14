@@ -125,11 +125,11 @@ class FTY {
         if (!$value) return $value;
 
         switch (true) {
-            case $parseAs === self::PARSE_AS_ASSOC:
+            case (int) $parseAs === self::PARSE_AS_ASSOC:
                 return Spyc::YAMLLoadString($value);
-            case $parseAs === self::PARSE_AS_OBJECT:
+            case (int) $parseAs === self::PARSE_AS_OBJECT:
                 return self::array2object(Spyc::YAMLLoadString($value));
-            case $parseAs === self::PARSE_AS_WIRE_DATA:
+            case (int) $parseAs === self::PARSE_AS_WIRE_DATA:
                 $wire = self::array2wire(Spyc::YAMLLoadString($value));
                 $wire->toStringString = $toStringString;
                 return $wire;
