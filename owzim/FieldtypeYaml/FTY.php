@@ -146,7 +146,9 @@ class FTY {
                     $wire = $prewire;
                 }
 
-                $wire->toStringString = $toStringString;
+                if ($prewire instanceof FTYData || $prewire instanceof FTYArray) {
+                    $wire->toStringString = $toStringString;
+                }
 
                 return $wire;
         }
