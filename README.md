@@ -2,7 +2,7 @@
 
 ---
 
-#### for ProcessWire 2.5.5
+#### for ProcessWire 2.5.5 and 3.x
 
 Field that stores YAML data and formats it as an object, when requested.
 
@@ -14,9 +14,12 @@ In the `Details`-Tab you have some options you can choose from:
 
 **Parse as**
 
-Default is `WireArray/WireData`, the data can also be parsed as `Object` or `Associative Array`.
+* **`Associative Array:`** Default output by the used **Spyc** parser
+* **`Object:`** Same as `Associative Array` but with `$foo->bar` instead of `$foo['bar']`
+* **`WireArray/WireData`** You can access properties like you are used to with *pages* or *fields*, like `$page->person->get('title|name')` or `$page->people->find('age>20')`
+* **`WireArray`** Same as `WireArray/WireData` but will wrap a `WireArray` around if the result is `WireData`
 
-*Associative Array* is the fastest and the default output by the used *Spyc* parser, *WireArray/WireData* might be the slowest, but it's also the most feature rich. You can access properties like you are used to with *pages* or *fields*, like `$page->person->get('title|name')` or `$page->people->find('age>20')`.
+
 
 ## Usage
 
@@ -68,6 +71,9 @@ echo $out;
 
 ### Change Log
 
+* **0.4.0**
+  * Add `WireArray` `parseAs`-option
+  * Empty fields will now default to an empty version of their respective `parseAs` objects
 * **0.3.0** Make the module compatible with ProcessWire 3.x
 * **0.2.0** add WireArray feature, parse chaching and make default `toString` output the name or label of the field, if WireData/-Array is selected
 * **0.1.0** initial version

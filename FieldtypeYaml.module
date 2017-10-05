@@ -12,7 +12,7 @@ use \owzim\FieldtypeYaml\FTY;
  * @author Christian (owzim) Raunitschka <git@raunitschka.de>
  * @copyright Copyright (c) 2015, Christian Raunitschka
  *
- * @version 0.3.0
+ * @version 0.4.0
  *
  * @filesource
  *
@@ -36,7 +36,7 @@ class FieldtypeYaml extends FieldtypeTextarea
         return array(
             'title'    => 'Fieldtype YAML',
             'summary'  => 'Field that stores YAML data and formats it as an object, when requested.',
-            'version'  => '0.3.0',
+            'version'  => '0.4.0',
             'author'   => 'owzim',
             'icon'     => 'code',
             'requires' => array('PHP>=5.4','ProcessWire>=2.5.5'),
@@ -112,25 +112,38 @@ class FieldtypeYaml extends FieldtypeTextarea
         $inputfields = new InputfieldWrapper();
 
         foreach ($parentInputfields as $inputfield) {
+            // Don't add fields that are needed in this scope
             if (!in_array($inputfield->name, $forbidden)) {
-                $inputfields->append($inputfield);
+
+                // Dont't add fields which visibilities react to 'contentType',
+                // since this is not added anyway, and will throw a session warning
+                if (strpos($inputfield->showIf, 'contentType') === false) {
+                    $inputfields->append($inputfield);
+                } else {
+                    // https://regex101.com/r/G4Wo6l/1
+                    // $inputfield->showIf = preg_replace('/(contentType=[0-9](,)?( )?)/', '', $inputfield->showIf);
+                }
             }
         }
 
         $inputfields->add(array(
-            'type' => 'InputfieldRadios',
-            'name' => 'yamlParseAs',
-            'label' => $this->_('Parse as'),
-            'options' => array(
-                FTY::PARSE_AS_WIRE_DATA => $this->_('WireArray/WireData'),
-                FTY::PARSE_AS_OBJECT => $this->_('Object'),
-                FTY::PARSE_AS_ASSOC => $this->_('Associative Array'),
-            ),
-            'value' => !isset($field->yamlParseAs) ? FTY::DEFAULT_PARSE_AS : (int) $field->yamlParseAs,
-            'optionColumns' => 1,
-            'description' => $this->_(
-                "If WireArray/WireData is chosen, the parsed array/object has full support for things like **\$person->get('title|name')** or **\$people->find('age>20')**"
-            ),
+            array(
+                'type'          => 'InputfieldRadios',
+                'name'          => 'yamlParseAs',
+                'label'         => $this->_('Parse as'),
+                'options'       => array(
+                    FTY::PARSE_AS_WIRE_DATA => $this->_('WireArray/WireData'),
+                    FTY::PARSE_AS_WIRE_ARRAY => $this->_('WireArray'),
+                    FTY::PARSE_AS_OBJECT => $this->_('Object'),
+                    FTY::PARSE_AS_ASSOC => $this->_('Associative Array'),
+                ),
+                'value'         => !isset($field->yamlParseAs) ? FTY::DEFAULT_PARSE_AS : (int) $field->yamlParseAs,
+                'optionColumns' => 0,
+                'columnWidth'   => 50,
+                'description'   => $this->_(
+                    "See `**README.md**` for usage details"
+                ),
+            )
         ));
 
         return $inputfields;

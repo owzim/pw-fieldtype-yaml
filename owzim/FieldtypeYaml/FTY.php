@@ -9,6 +9,7 @@ class FTY {
     const PARSE_AS_ASSOC = 0;
     const PARSE_AS_OBJECT = 1;
     const PARSE_AS_WIRE_DATA = 2;
+    const PARSE_AS_WIRE_ARRAY = 3;
     const DEFAULT_PARSE_AS = 2;
 
     public static function isArray($array)
@@ -120,9 +121,14 @@ class FTY {
     }
 
 
-    public static function parseYAML($value, $parseAs = self::DEFAULT_PARSE_AS, $toStringString = '')
+    public static function parseYAML(
+        $value,
+        $parseAs = self::DEFAULT_PARSE_AS,
+        $toStringString = '')
     {
-        if (!$value) return $value;
+
+        $value = trim($value);
+        if (!$value) return self::getDefaultValue($value, $parseAs, $toStringString);
 
         switch (true) {
             case $parseAs === self::PARSE_AS_ASSOC:
@@ -130,10 +136,39 @@ class FTY {
             case $parseAs === self::PARSE_AS_OBJECT:
                 return self::array2object(Spyc::YAMLLoadString($value));
             case $parseAs === self::PARSE_AS_WIRE_DATA:
-                $wire = self::array2wire(Spyc::YAMLLoadString($value));
+            case $parseAs === self::PARSE_AS_WIRE_ARRAY:
+                $prewire = self::array2wire(Spyc::YAMLLoadString($value));
+
+                if ($prewire instanceof FTYData && $parseAs === self::PARSE_AS_WIRE_ARRAY) {
+                    $wire = new FTYArray();
+                    $wire->add($prewire);
+                } else {
+                    $wire = $prewire;
+                }
+
+                $wire->toStringString = $toStringString;
+
+                return $wire;
+        }
+    }
+
+    public static function getDefaultValue($value, $parseAs, $toStringString)
+    {
+        switch (true) {
+            default:
+                return $value;
+            case $parseAs === self::PARSE_AS_ASSOC:
+                return array();
+            case $parseAs === self::PARSE_AS_OBJECT:
+                return new \stdClass();
+            case $parseAs === self::PARSE_AS_WIRE_DATA:
+                $wire = new FTYData();
                 $wire->toStringString = $toStringString;
                 return $wire;
-
+            case $parseAs === self::PARSE_AS_WIRE_ARRAY:
+                $wire = new FTYArray();
+                $wire->toStringString = $toStringString;
+                return $wire;
         }
     }
 }
