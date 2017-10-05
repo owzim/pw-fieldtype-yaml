@@ -10,9 +10,9 @@ use \owzim\FieldtypeYaml\FTY;
  * See README.md for usage instructions.
  *
  * @author Christian (owzim) Raunitschka <git@raunitschka.de>
- * @copyright Copyright (c) 2015, Christian Raunitschka
+ * @copyright Copyright (c) 2015-2017, Christian Raunitschka
  *
- * @version 0.4.0
+ * @version 0.4.1
  *
  * @filesource
  *
@@ -24,19 +24,12 @@ use \owzim\FieldtypeYaml\FTY;
 class FieldtypeYaml extends FieldtypeTextarea
 {
 
-    /**
-     * $parseCache
-     *
-     * @var array
-     */
-    protected static $parseCache = array();
-
     public static function getModuleInfo()
     {
         return array(
             'title'    => 'Fieldtype YAML',
             'summary'  => 'Field that stores YAML data and formats it as an object, when requested.',
-            'version'  => '0.4.0',
+            'version'  => '0.4.1',
             'author'   => 'owzim',
             'icon'     => 'code',
             'requires' => array('PHP>=5.4','ProcessWire>=2.5.5'),
@@ -77,12 +70,13 @@ class FieldtypeYaml extends FieldtypeTextarea
      */
     public function getCachedValue(Page $page, Field $field, $value)
     {
+        static $cache = null;
+        if (is_null($cache)) $cache = array();
+
         $cacheKey = "{$page->id}_{$field->id}";
-        if (!isset(self::$parseCache[$cacheKey])) {
-            return self::$parseCache[$cacheKey] = $this->parseValue($page, $field, $value);
-        } else {
-            return self::$parseCache[$cacheKey];
-        }
+        if (array_key_exists($cacheKey, $cache)) return $cache[$cacheKey];
+
+        return $cache[$cacheKey] = $this->parseValue($page, $field, $value);
     }
 
     /**
