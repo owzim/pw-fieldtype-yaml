@@ -2,7 +2,7 @@
 
 namespace owzim\FieldtypeYaml;
 
-use \owzim\FieldtypeYaml\Vendor\Spyc;
+use \owzim\FieldtypeYaml\Vendor\Spyc\Spyc;
 
 class FTY {
 
