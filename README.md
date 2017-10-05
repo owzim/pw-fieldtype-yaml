@@ -71,6 +71,7 @@ echo $out;
 
 ### Change Log
 
+* **0.5.0** Update Spyc to 0.6.2
 * **0.4.0**
   * Add `WireArray` `parseAs`-option
   * Empty fields will now default to an empty version of their respective `parseAs` objects
