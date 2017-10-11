@@ -71,6 +71,7 @@ echo $out;
 
 ### Change Log
 
+* **0.5.1** Use [pecl](https://pecl.php.net/package/yaml) yaml if installed
 * **0.5.0** Update Spyc to 0.6.2
 * **0.4.0**
   * Add `WireArray` `parseAs`-option
