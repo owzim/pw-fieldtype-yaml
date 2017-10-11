@@ -132,12 +132,12 @@ class FTY {
 
         switch (true) {
             case $parseAs === self::PARSE_AS_ASSOC:
-                return Spyc::YAMLLoadString($value);
+                return self::_parseYAML($value);
             case $parseAs === self::PARSE_AS_OBJECT:
-                return self::array2object(Spyc::YAMLLoadString($value));
+                return self::array2object(self::_parseYAML($value));
             case $parseAs === self::PARSE_AS_WIRE_DATA:
             case $parseAs === self::PARSE_AS_WIRE_ARRAY:
-                $prewire = self::array2wire(Spyc::YAMLLoadString($value));
+                $prewire = self::array2wire(self::_parseYAML($value));
 
                 if ($prewire instanceof FTYData && $parseAs === self::PARSE_AS_WIRE_ARRAY) {
                     $wire = new FTYArray();
@@ -171,6 +171,15 @@ class FTY {
                 $wire = new FTYArray();
                 $wire->toStringString = $toStringString;
                 return $wire;
+        }
+    }
+
+    protected static function _parseYAML($value)
+    {
+        if (!extension_loaded('yaml')) {
+            return Spyc::YAMLLoadString($value);
+        } else {
+            return \yaml_parse($value);
         }
     }
 }
